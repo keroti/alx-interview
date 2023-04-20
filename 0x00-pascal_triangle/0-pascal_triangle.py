@@ -3,6 +3,13 @@
 
 
 def pascal_triangle(n):
+    """
+    Pascal's triangle
+    Args:
+      n (int): The number of rows in the triangle
+    Returns:
+      List of lists of integers for the triangle
+    """
     if n <= 0:
         return []
 
