@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+""" FUNCTION FOR PASCAL'S TRIANGLE """
+
+
 def pascal_triangle(n):
     if n <= 0:
         return []
