@@ -8,7 +8,8 @@ def minOperations(n):
     Args:
     n (int): The desired number of H characters
     Returns:
-        int: The fewest number of operations needed to result in exactly n H characters
+        int: The fewest number of operations needed
+        to result in exactly n H characters
     """
     if n <= 1:
         return 0
