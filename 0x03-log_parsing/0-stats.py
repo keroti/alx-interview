@@ -1,37 +1,29 @@
 #!/usr/bin/python3
-'''Module for log parsing'''
-
-
 import sys
 
-status_code = {'200': 0, '301': 0, '400': 0, '401': 0,
-               '403': 0, '404': 0, '405': 0, '500': 0}
-size = 0
-counter = 0
+status_codes = ['200', '301', '400', '401', '403', '404', '405', '500']
+status_count = {code: 0 for code in status_codes}
+total_size = 0
+line_count = 0
 
-try:
-    for i in sys.stdin:
-        list = i.split(" ")
-        if len(list) > 4:
-            code = list[-2]
-            size = int(list[-1])
-            if code in status_code.keys():
-                status_code[code] += 1
-            size += size
-            counter += 1
+for line in sys.stdin:
+    try:
+        parts = line.split()
+        code = parts[-2]
+        size = int(parts[-1])
+        if code in status_codes:
+            status_count[code] += 1
+        total_size += size
+        line_count += 1
+        if line_count % 10 == 0:
+            print("File size: {}".format(total_size))
+            for code in sorted(status_count.keys()):
+                if status_count[code] > 0:
+                    print("{}: {}".format(code, status_count[code]))
+    except Exception:
+        pass
 
-        if counter == 10:
-            counter = 0
-            print('File size: {}'.format(size))
-            for key, value in sorted(status_code.items()):
-                if value != 0:
-                    print('{}: {}'.format(key, value))
-
-except Exception as err:
-    pass
-
-finally:
-    print('File size: {}'.format(size))
-    for key, value in sorted(status_code.items()):
-        if value != 0:
-            print('{}: {}'.format(key, value))
+print("File size: {}".format(total_size))
+for code in sorted(status_count.keys()):
+    if status_count[code] > 0:
+        print("{}: {}".format(code, status_count[code]))
