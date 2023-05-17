@@ -12,9 +12,9 @@ def validUTF8(data):
 
     mask1 = 1 << 7
     mask2 = 1 << 6
-    mask_byte = 1 << 7
 
     for byte in data:
+        mask_byte = 1 << 7
         if num_bytes == 0:
 
             while mask_byte & byte:
