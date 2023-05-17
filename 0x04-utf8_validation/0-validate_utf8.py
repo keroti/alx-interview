@@ -6,19 +6,20 @@ UTF-8 Validation module
 
 def validUTF8(data):
     """Determines if a given data set
-    represents a valid utf-8 encoding.
+    represents a valid utf-8 encoding
     """
     num_bytes = 0
 
     mask1 = 1 << 7
     mask2 = 1 << 6
+    mask_byte = 1 << 7
 
     for byte in data:
         if num_bytes == 0:
 
-            while mask1 & byte:
+            while mask_byte & byte:
                 num_bytes += 1
-                mask1 >>= 1
+                mask_byte = mask_byte >> 1
 
             if num_bytes == 0:
                 continue
@@ -27,7 +28,7 @@ def validUTF8(data):
                 return False
 
         else:
-            if byte & mask1 or not byte & mask2:
+            if not (byte & mask1 and not (byte & mask2)):
                 return False
 
         num_bytes -= 1
