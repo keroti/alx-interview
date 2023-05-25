@@ -4,6 +4,7 @@ N queens problem
 """
 import sys
 
+
 def first_board(n):
     """
     Initialize a 2 by 2 sized chessboard.
@@ -96,7 +97,7 @@ def solve(board, row, queens, solutions):
             new_board[row][i] = "Q"
             spots(new_board, row, i)
             solutions = solve(new_board, row + 1,
-                                        queens + 1, solutions)
+                              queens + 1, solutions)
 
     return (solutions)
 
