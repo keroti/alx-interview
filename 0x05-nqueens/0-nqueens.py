@@ -5,85 +5,115 @@ N queens problem
 import sys
 
 
-def is_safe(board, row, col):
+def first_board(n):
     """
-    Check if it's safe to place a queen at board[row][col]
+    Initialize a 2 by 2 sized chessboard.
     """
-    # Check for queens in the same column
-    for i in range(row):
-        if board[i][col] == 1:
-            return False
-
-    # Check for queens in the upper diagonal
-    i, j = row, col
-    while i >= 0 and j >= 0:
-        if board[i][j] == 1:
-            return False
-        i -= 1
-        j -= 1
-
-    # Check for queens in the lower diagonal
-    i, j = row, col
-    while i >= 0 and j < len(board):
-        if board[i][j] == 1:
-            return False
-        i -= 1
-        j += 1
-
-    return True
+    board = []
+    [board.append([]) for i in range(n)]
+    [row.append(' ') for i in range(n) for row in board]
+    return (board)
 
 
-def solve_nqueens(board, row, solutions):
+def board_copy(board):
     """
-    Solve the N queens problem using backtracking
+    Return a copy of a chessboard.
     """
-    # Base case: all queens are placed
-    if row == len(board):
-        solutions.append(board[:])
-        return
-
-    for col in range(len(board)):
-        if is_safe(board, row, col):
-            # Place the queen
-            board[row][col] = 1
-
-            # Recur to place the rest of the queens
-            solve_nqueens(board, row + 1, solutions)
-
-            # Backtrack and remove the queen
-            board[row][col] = 0
+    if isinstance(board, list):
+        return list(map(board_copy, board))
+    return (board)
 
 
-def print_solutions(solutions):
+def solution(board):
     """
-    Print the solutions in the required format
+    Return the list of lists representation of a solved chessboard
     """
-    for solution in solutions:
-        print([[i, j] for i, j in enumerate(solution)])
+    solution = []
+    for k in range(len(board)):
+        for m in range(len(board)):
+            if board[k][m] == "Q":
+                solution.append([k, m])
+                break
+    return (solution)
 
 
-if __name__ == '__main__':
-    # Validate and parse the command-line argument
+def spots(board, row, col):
+    """
+    Remove spots queen can no longer pklay
+    """
+    # forward spots
+    for x in range(col + 1, len(board)):
+        board[row][x] = "x"
+    # backwards spots
+    for x in range(col - 1, -1, -1):
+        board[row][x] = "x"
+    # spots below
+    for r in range(row + 1, len(board)):
+        board[r][col] = "x"
+    # spots above
+    for r in range(row - 1, -1, -1):
+        board[r][col] = "x"
+    # spots diagonally down to the right
+    x = col + 1
+    for r in range(row + 1, len(board)):
+        if x >= len(board):
+            break
+        board[r][x] = "x"
+        x += 1
+    # spots diagonally up to the left
+    x = col - 1
+    for r in range(row - 1, -1, -1):
+        if x < 0:
+            break
+        board[r][x]
+        x -= 1
+    # spots diagonally up to the right
+    x = col + 1
+    for r in range(row - 1, -1, -1):
+        if x >= len(board):
+            break
+        board[r][x] = "x"
+        x += 1
+    # spots diagonally down to the left
+    x = col - 1
+    for r in range(row + 1, len(board)):
+        if x < 0:
+            break
+        board[r][x] = "x"
+        x -= 1
+
+
+def solve(board, row, queens, solutions):
+    """
+    Solve an N-queens puzzle and return solution
+    """
+    if queens == len(board):
+        solutions.append(solution(board))
+        return (solutions)
+
+    for y in range(len(board)):
+        if board[row][y] == " ":
+            new_board = board_copy(board)
+            new_board[row][y] = "Q"
+            spots(new_board, row, y)
+            solutions = solve(new_board, row + 1,
+                              queens + 1, solutions)
+
+    return (solutions)
+
+
+if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
-
-    try:
-        N = int(sys.argv[1])
-    except ValueError:
+    if sys.argv[1].isdigit() is False:
         print("N must be a number")
         sys.exit(1)
-
-    if N < 4:
+    if int(sys.argv[1]) < 4:
         print("N must be at least 4")
         sys.exit(1)
 
-    # Initialize an empty chessboard
-    board = [[0 for _ in range(N)] for _ in range(N)]
-
-    # Solve the N queens problem
-    solutions = []
-    solve_nqueens(board, 0, solutions)
-
-    # Print the solutions
-    print_solutions(solutions)
+    board = first_board(int(sys.argv[1]))
+    solutions = solve(board, 0, 0, [])
+    for solve in solutions:
+        print(solve)
