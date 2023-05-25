@@ -29,10 +29,10 @@ def solution(board):
     Return the list of lists representation of a solved chessboard
     """
     solution = []
-    for i in range(len(board)):
-        for j in range(len(board)):
-            if board[i][j] == "Q":
-                solution.append([i, j])
+    for k in range(len(board)):
+        for m in range(len(board)):
+            if board[k][m] == "Q":
+                solution.append([k, m])
                 break
     return (solution)
 
@@ -42,11 +42,11 @@ def spots(board, row, col):
     Remove spots queen can no longer pklay
     """
     # forward spots
-    for c in range(col + 1, len(board)):
-        board[row][c] = "x"
+    for x in range(col + 1, len(board)):
+        board[row][x] = "x"
     # backwards spots
-    for c in range(col - 1, -1, -1):
-        board[row][c] = "x"
+    for x in range(col - 1, -1, -1):
+        board[row][x] = "x"
     # spots below
     for r in range(row + 1, len(board)):
         board[r][col] = "x"
@@ -54,33 +54,33 @@ def spots(board, row, col):
     for r in range(row - 1, -1, -1):
         board[r][col] = "x"
     # spots diagonally down to the right
-    c = col + 1
+    x = col + 1
     for r in range(row + 1, len(board)):
-        if c >= len(board):
+        if x >= len(board):
             break
-        board[r][c] = "x"
-        c += 1
+        board[r][x] = "x"
+        x += 1
     # spots diagonally up to the left
-    c = col - 1
+    x = col - 1
     for r in range(row - 1, -1, -1):
-        if c < 0:
+        if x < 0:
             break
-        board[r][c]
-        c -= 1
+        board[r][x]
+        x -= 1
     # spots diagonally up to the right
-    c = col + 1
+    x = col + 1
     for r in range(row - 1, -1, -1):
-        if c >= len(board):
+        if x >= len(board):
             break
-        board[r][c] = "x"
-        c += 1
+        board[r][x] = "x"
+        x += 1
     # spots diagonally down to the left
-    c = col - 1
+    x = col - 1
     for r in range(row + 1, len(board)):
-        if c < 0:
+        if x < 0:
             break
-        board[r][c] = "x"
-        c -= 1
+        board[r][x] = "x"
+        x -= 1
 
 
 def solve(board, row, queens, solutions):
@@ -91,11 +91,11 @@ def solve(board, row, queens, solutions):
         solutions.append(solution(board))
         return (solutions)
 
-    for i in range(len(board)):
-        if board[row][i] == " ":
+    for y in range(len(board)):
+        if board[row][y] == " ":
             new_board = board_copy(board)
-            new_board[row][i] = "Q"
-            spots(new_board, row, i)
+            new_board[row][y] = "Q"
+            spots(new_board, row, y)
             solutions = solve(new_board, row + 1,
                               queens + 1, solutions)
 
