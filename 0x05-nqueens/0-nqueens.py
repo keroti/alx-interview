@@ -1,113 +1,119 @@
 #!/usr/bin/python3
-"""N queens solution finder module.
+"""
+N queens problem
 """
 import sys
 
 
-solutions = []
-"""The list of possible solutions to the N queens problem.
-"""
-n = 0
-"""The size of the chessboard.
-"""
-pos = None
-"""The list of possible positions on the chessboard.
-"""
-
-
-def get_input():
-    """Retrieves and validates this program's argument.
-
-    Returns:
-        int: The size of the chessboard.
+def first_board(n):
     """
-    global n
-    n = 0
+    Initialize a 2 by 2 sized chessboard.
+    """
+    board = []
+    [board.append([]) for i in range(n)]
+    [row.append(' ') for i in range(n) for row in board]
+    return (board)
+
+
+def board_copy(board):
+    """
+    Return a copy of a chessboard.
+    """
+    if isinstance(board, list):
+        return list(map(board_copy, board))
+    return (board)
+
+
+def solution(board):
+    """
+    Return the list of lists representation of a solved chessboard
+    """
+    solution = []
+    for k in range(len(board)):
+        for m in range(len(board)):
+            if board[k][m] == "Q":
+                solution.append([k, m])
+                break
+    return (solution)
+
+
+def spots(board, row, col):
+    """
+    Remove spots queen can no longer pklay
+    """
+    # forward spots
+    for x in range(col + 1, len(board)):
+        board[row][x] = "x"
+    # backwards spots
+    for x in range(col - 1, -1, -1):
+        board[row][x] = "x"
+    # spots below
+    for r in range(row + 1, len(board)):
+        board[r][col] = "x"
+    # spots above
+    for r in range(row - 1, -1, -1):
+        board[r][col] = "x"
+    # spots diagonally down to the right
+    x = col + 1
+    for r in range(row + 1, len(board)):
+        if x >= len(board):
+            break
+        board[r][x] = "x"
+        x += 1
+    # spots diagonally up to the left
+    x = col - 1
+    for r in range(row - 1, -1, -1):
+        if x < 0:
+            break
+        board[r][x]
+        x -= 1
+    # spots diagonally up to the right
+    x = col + 1
+    for r in range(row - 1, -1, -1):
+        if x >= len(board):
+            break
+        board[r][x] = "x"
+        x += 1
+    # spots diagonally down to the left
+    x = col - 1
+    for r in range(row + 1, len(board)):
+        if x < 0:
+            break
+        board[r][x] = "x"
+        x -= 1
+
+
+def solve(board, row, queens, solutions):
+    """
+    Solve an N-queens puzzle and return solution
+    """
+    if queens == len(board):
+        solutions.append(solution(board))
+        return (solutions)
+
+    for y in range(len(board)):
+        if board[row][y] == " ":
+            new_board = board_copy(board)
+            new_board[row][y] = "Q"
+            spots(new_board, row, y)
+            solutions = solve(new_board, row + 1,
+                              queens + 1, solutions)
+
+    return (solutions)
+
+
+if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
-    try:
-        n = int(sys.argv[1])
-    except Exception:
+    if sys.argv[1].isdigit() is False:
         print("N must be a number")
         sys.exit(1)
-    if n < 4:
+    if int(sys.argv[1]) < 4:
         print("N must be at least 4")
         sys.exit(1)
-    return n
 
-
-def is_attacking(pos0, pos1):
-    """Checks if the positions of two queens are in an attacking mode.
-
-    Args:
-        pos0 (list or tuple): The first queen's position.
-        pos1 (list or tuple): The second queen's position.
-
-    Returns:
-        bool: True if the queens are in an attacking position else False.
-    """
-    if (pos0[0] == pos1[0]) or (pos0[1] == pos1[1]):
-        return True
-    return abs(pos0[0] - pos1[0]) == abs(pos0[1] - pos1[1])
-
-
-def group_exists(group):
-    """Checks if a group exists in the list of solutions.
-
-    Args:
-        group (list of integers): A group of possible positions.
-
-    Returns:
-        bool: True if it exists, otherwise False.
-    """
-    global solutions
-    for stn in solutions:
-        i = 0
-        for stn_pos in stn:
-            for grp_pos in group:
-                if stn_pos[0] == grp_pos[0] and stn_pos[1] == grp_pos[1]:
-                    i += 1
-        if i == n:
-            return True
-    return False
-
-
-def build_solution(row, group):
-    """Builds a solution for the n queens problem.
-
-    Args:
-        row (int): The current row in the chessboard.
-        group (list of lists of integers): The group of valid positions.
-    """
-    global solutions
-    global n
-    if row == n:
-        tmp0 = group.copy()
-        if not group_exists(tmp0):
-            solutions.append(tmp0)
-    else:
-        for col in range(n):
-            a = (row * n) + col
-            matches = zip(list([pos[a]]) * len(group), group)
-            used_positions = map(lambda x: is_attacking(x[0], x[1]), matches)
-            group.append(pos[a].copy())
-            if not any(used_positions):
-                build_solution(row + 1, group)
-            group.pop(len(group) - 1)
-
-
-def get_solutions():
-    """Gets the solutions for the given chessboard size.
-    """
-    global pos, n
-    pos = list(map(lambda x: [x // n, x % n], range(n ** 2)))
-    a = 0
-    group = []
-    build_solution(a, group)
-
-
-n = get_input()
-get_solutions()
-for solution in solutions:
-    print(solution)
+    board = first_board(int(sys.argv[1]))
+    solutions = solve(board, 0, 0, [])
+    for solve in solutions:
+        print(solve)
